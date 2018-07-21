@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PaladinsLoadoutSelector.Data
+namespace PaladinsDomain
 {
-    public class Class1
+    class Map
     {
     }
 }
