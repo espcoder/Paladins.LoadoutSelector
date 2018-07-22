@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace PaladinsDomain
 {
-    public class Map
+    public class Card
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
+        public int Level { get; set; }
     }
 }
