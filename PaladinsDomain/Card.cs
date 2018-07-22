@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PaladinsDomain
 {
     public class Card
     {
         public int Id { get; set; }
+        public Champion Champion { get; set; }
         public string Name { get; set; }
-        public int Level { get; set; }
+
+        public List<LoadoutCard> Loadouts { get; set; }
     }
 }

@@ -7,6 +7,6 @@ namespace PaladinsDomain
         public int Id { get; set; }
         public string Name { get; set; }
         public Champion Champion { get; set; }
-        public List<Card> Cards { get; set; }
+        public List<LoadoutCard> LoadoutCards { get; set; }
     }
 }

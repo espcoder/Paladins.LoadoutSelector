@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PaladinsLoadoutSelector.Data;
 
 namespace PaladinsLoadoutSelector.Data.Migrations
 {
     [DbContext(typeof(PaladinsLoudoutSelectorContext))]
-    partial class PaladinsLoudoutSelectorContextModelSnapshot : ModelSnapshot
+    [Migration("20180722210854_add-champion-card")]
+    partial class addchampioncard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,11 +29,17 @@ namespace PaladinsLoadoutSelector.Data.Migrations
 
                     b.Property<int?>("ChampionId");
 
+                    b.Property<int>("Level");
+
+                    b.Property<int?>("LoadoutId");
+
                     b.Property<string>("Name");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ChampionId");
+
+                    b.HasIndex("LoadoutId");
 
                     b.ToTable("Cards");
                 });
@@ -66,21 +74,6 @@ namespace PaladinsLoadoutSelector.Data.Migrations
                     b.ToTable("Loadouts");
                 });
 
-            modelBuilder.Entity("PaladinsDomain.LoadoutCard", b =>
-                {
-                    b.Property<int>("CardId");
-
-                    b.Property<int>("LoadoutId");
-
-                    b.Property<int>("Level");
-
-                    b.HasKey("CardId", "LoadoutId");
-
-                    b.HasIndex("LoadoutId");
-
-                    b.ToTable("LoadoutCards");
-                });
-
             modelBuilder.Entity("PaladinsDomain.Map", b =>
                 {
                     b.Property<int>("Id")
@@ -99,6 +92,10 @@ namespace PaladinsLoadoutSelector.Data.Migrations
                     b.HasOne("PaladinsDomain.Champion", "Champion")
                         .WithMany()
                         .HasForeignKey("ChampionId");
+
+                    b.HasOne("PaladinsDomain.Loadout")
+                        .WithMany("Cards")
+                        .HasForeignKey("LoadoutId");
                 });
 
             modelBuilder.Entity("PaladinsDomain.Loadout", b =>
@@ -106,19 +103,6 @@ namespace PaladinsLoadoutSelector.Data.Migrations
                     b.HasOne("PaladinsDomain.Champion", "Champion")
                         .WithMany("Loadouts")
                         .HasForeignKey("ChampionId");
-                });
-
-            modelBuilder.Entity("PaladinsDomain.LoadoutCard", b =>
-                {
-                    b.HasOne("PaladinsDomain.Card", "Card")
-                        .WithMany("Loadouts")
-                        .HasForeignKey("CardId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("PaladinsDomain.Loadout", "Loadout")
-                        .WithMany("LoadoutCards")
-                        .HasForeignKey("LoadoutId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

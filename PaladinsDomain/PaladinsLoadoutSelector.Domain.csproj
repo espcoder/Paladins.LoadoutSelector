@@ -43,6 +43,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="Champion.cs" />
     <Compile Include="Loadout.cs" />
+    <Compile Include="LoadoutCard.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
