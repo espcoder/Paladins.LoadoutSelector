@@ -1,4 +1,6 @@
-﻿using PaladinsDomain;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using PaladinsDomain;
 using PaladinsLoadoutSelector.Data;
 using System;
 using System.Collections.Generic;
@@ -12,20 +14,59 @@ namespace PaladinsLoadoutSelector.UI.Console
 
         private static void Main(string[] args)
         {
+            // EnsureDeleted to Delete the local database when the app runs.
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             #region Setup Data
-            //InsertChampion();
+            // Use these methods to seed the database with data.
+            InsertChampion();
+            AddCards();
+            SetupMyProfile();
+            #endregion Setup Data
+
             //GetAllChampionQuery();
             //GetSingleChampion("baric");
             //UpdateChampion(2, "Fernando");
-            //AddCards();
-            //SetupMyProfile(); 
-            #endregion
 
-
+            var champ = GetChampion("Ruckus");
+            DisplayChampion(champ);
 
             System.Console.Read();
+        }
+
+        private static Champion GetChampion(string name)
+        {
+            var champ = context.Champions
+                .Include(i => i.Loadouts)
+                .ThenInclude(ti => ti.LoadoutCards)
+                .ThenInclude(c => c.Card)
+                .FirstOrDefault(f => f.Name == name);
+
+            return champ;
+        }
+
+        private static void DisplayChampion(Champion champ)
+        {
+            if (champ == null)
+            {
+                System.Console.WriteLine("The Champion does not exist in the datastore.");
+                return;
+            }
+
+            System.Console.WriteLine($"{champ.Name} has loadout: {champ.Loadouts.First()?.Name ?? "No loadouts"}");
+            
+            if (champ.Loadouts.Any())
+            {
+                foreach (var loadout in champ.Loadouts)
+                {
+                    System.Console.WriteLine($"Loadout: {loadout.Name}");
+                    foreach (var loadoutCard in loadout.LoadoutCards)
+                    {
+                        System.Console.WriteLine($"{loadoutCard.Card.Name} at level {loadoutCard.Level.ToString()}");
+                    }
+                }
+            }
         }
 
         private static void AddCards()
@@ -48,7 +89,6 @@ namespace PaladinsLoadoutSelector.UI.Console
         {
             try
             {
-                
                 var ruckus = context.Champions.First(f => f.Name == "Ruckus");
                 var cards = context.Cards.Where(w => w.Champion == ruckus).ToList();
 
@@ -70,11 +110,9 @@ namespace PaladinsLoadoutSelector.UI.Console
                 context.LoadoutCards.AddRange(loadoutCards);
 
                 context.SaveChanges();
-
             }
             catch (Exception ex)
             {
-
                 System.Console.WriteLine($"Ahhh %^&$. Error doing this:{ex.Message}");
             }
         }
@@ -84,10 +122,7 @@ namespace PaladinsLoadoutSelector.UI.Console
             var champ = context.Champions.Find(id);
             champ.Name = newName;
             context.SaveChanges();
-
         }
-
-
 
         private static void GetSingleChampion(string name)
         {
@@ -96,9 +131,7 @@ namespace PaladinsLoadoutSelector.UI.Console
 
         private static void GetAllChampionQuery()
         {
-            var champions = context.Champions.Where(w => w.Name == "Ruckus").ToList();
-
-            foreach (var item in champions)
+            foreach (var item in context.Champions)
             {
                 System.Console.WriteLine($"Champion: {item.Name}");
             }
@@ -108,6 +141,7 @@ namespace PaladinsLoadoutSelector.UI.Console
         {
             var listOChamps = new List<Champion>
             {
+                 new Champion { Name = "Ruckus" },
                  new Champion { Name = "Lex" },
                  new Champion {Name="Cassie"},
                  new Champion{Name="Viktor"},
